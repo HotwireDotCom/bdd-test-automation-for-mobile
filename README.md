@@ -81,7 +81,7 @@ You can install this BDD framework in your current project by adding the followi
 ```
 Since we have created a profile for cucumber (which gives us flexibility to add more profiles if we want in future), maven should run with 'cucumber' profile to leverage this.
 
-## Author
+## Authors
 
 Sridhar Ramakrishnan, Neha Srivastava, Hima Gogineni
 
