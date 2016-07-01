@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.hotwire.testing</groupId>
+        <artifactId>ios-native-app</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+	<groupId>com.hotwire.testing</groupId>
+	<artifactId>nativeAppFeatures</artifactId>
+	<version>1.0.0</version>
+	<name>iOSMainFeatures</name>
+	<description>Apps tests using BDD framework</description>
+
+    <!-- Environment properties which can be passed from maven command -->
+
+    <properties>
+    	<spring.profiles.active></spring.profiles.active>
+        <app_dir></app_dir>
+        <appium_url>http://127.0.0.1:4723/wd/hub</appium_url>
+        <app_name>YourApp.app</app_name>
+        <browser_name>iOS</browser_name>
+        <version>7.0</version>
+        <platform>MAC</platform>
+        <otherTags>@JANKY, ~@JANKY</otherTags>
+        <mobileOSTag>@IOS, ~@IOS</mobileOSTag>
+        <testCategoryTags>@SMOKE, ~@SMOKE, @REGRESSION, ~@REGRESSION, @ANALYTICS, ~@ANALYTICS</testCategoryTags>
+        <subApp>@SomeSubModule, @AnotherSubModule</subApp>
+        <mobileOS>ios</mobileOS>
+        <device_name></device_name>
+        <bundle_id></bundle_id>
+        <udid></udid>
+        <platform_version>8.4</platform_version>
+    </properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>net.masterthought</groupId>
+				<artifactId>maven-cucumber-reporting</artifactId>
+				<version>0.0.4</version>
+				<executions>
+                    <execution>
+                        <id>execution</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/cucumber-html-reports</outputDirectory>
+                            <cucumberOutput>${project.build.directory}/cucumber_ios.json</cucumberOutput>
+                        </configuration>
+                    </execution>
+                </executions>
+			</plugin>
+			<plugin>
+	   			<groupId>org.codehaus.mojo</groupId>
+	  		    <artifactId>exec-maven-plugin</artifactId>
+	   			<version>1.2.1</version>
+	      		<configuration>
+	           		<classpathScope>test</classpathScope>
+	           		<executable>java</executable>
+	           		<successCodes>
+                		<successCode>0</successCode>
+                		<successCode>1</successCode>
+               		 	<successCode>2</successCode>
+            		</successCodes>
+        	  	</configuration>
+          	</plugin>
+		</plugins>
+	</build>	
+		
+	<!-- Maven Plugins goes here --> 
+	<!-- runs either "run" or "rerun" profile -->
+
+	<profiles>
+	<!-- Profile "run" runs all the tests in specified feature file (or scenarios that met the other criteria)-->
+	<profile>
+         <id>run</id>
+         <activation>
+             <file>
+                 <missing>target/rerun.txt</missing>
+             </file>
+         </activation>
+
+		<build>
+			<plugins>
+				<plugin>
+				    <groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.2.1</version>
+					<executions>
+						<execution>
+							<id>run</id>
+							<phase>test</phase>
+							<goals>
+								<goal>exec</goal>
+							</goals>
+							<configuration>
+								<arguments>
+									<argument>-ea</argument>
+									<argument>-Dspring.profiles.active=${spring.profiles.active}</argument>
+									<argument>-Dapp_dir=${app_dir}</argument>
+	                                <argument>-Dappium_url=${appium_url}</argument>
+	                                <argument>-Dapp_name=${app_name}</argument>
+	                                <argument>-Dbrowser_name=${browser_name}</argument>
+	                                <argument>-Dversion=${version}</argument>
+	                                <argument>-Dplatform=${platform}</argument>
+	                                <argument>-DmobileOS=${mobileOS}</argument>
+	                                <argument>-Dplatform_version=${platform_version}</argument>
+	                                <argument>-Ddevice_name=${device_name}</argument>
+									<argument>-DbundleId=${bundle_id}</argument>
+									<argument>-Dudid=${udid}</argument>
+									<argument>-classpath</argument>
+									<classpath />
+									<argument>cucumber.api.cli.Main</argument>
+									<argument>classpath:</argument>
+									<argument>--glue</argument>
+									<argument>com.hotwire.test.steps</argument>
+									<argument>--plugin</argument>
+	                                <argument>cucumber.runtime.formatter.JUnitFormatter:target/failsafe-reports/TEST-HTMLReportiOS.xml</argument>
+									<argument>--plugin</argument>
+									<argument>cucumber.runtime.formatter.HTMLFormatter:target/cucumber/HTMLReportiOS</argument>
+									<argument>--plugin</argument>
+									<argument>json:target/cucumber_ios.json</argument>
+									<argument>--plugin</argument>
+	                                <argument>rerun:target/rerun.txt</argument>
+									<argument>--monochrome</argument>
+									<argument>--tags</argument>
+	                                <argument>${otherTags}</argument>
+	                                <argument>--tags</argument>
+	                                <argument>${mobileOSTag}</argument>
+	                                <argument>--tags</argument>
+	                                <argument>${testCategoryTags}</argument>
+	                                <argument>--tags</argument>
+	                                <argument>${subApp}</argument>
+								</arguments>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</build>
+		</profile>
+		<!-- Profile "rerun" runs all the failed scenarios that are specified rerun.txt file -->
+	    <profile>
+            <id>rerun</id>
+            <activation>
+                <file>
+                    <exists>target/rerun.txt</exists>
+                </file>
+            </activation>
+            <build>
+            	<plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>rerun</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>
+                                    	<argument>-ea</argument>
+										<argument>-Dspring.profiles.active=${spring.profiles.active}</argument>
+										<argument>-Dapp_dir=${app_dir}</argument>
+		                                <argument>-Dappium_url=${appium_url}</argument>
+		                                <argument>-Dapp_name=${app_name}</argument>
+		                                <argument>-Dbrowser_name=${browser_name}</argument>
+		                                <argument>-Dversion=${version}</argument>
+		                                <argument>-Dplatform=${platform}</argument>
+		                                <argument>-DmobileOS=${mobileOS}</argument>
+		                                <argument>-Dplatform_version=${platform_version}</argument>
+		                                <argument>-Ddevice_name=${device_name}</argument>
+										<argument>-DbundleId=${bundle_id}</argument>
+										<argument>-Dudid=${udid}</argument>
+										<argument>-classpath</argument>
+										<classpath />
+										<argument>cucumber.api.cli.Main</argument>
+										<argument>@target/rerun.txt</argument>
+										<argument>--glue</argument>
+										<argument>com.hotwire.test.steps</argument>
+										<argument>--plugin</argument>
+		                                <argument>cucumber.runtime.formatter.JUnitFormatter:target/failsafe-reports/TEST-HTMLReportiOS.xml</argument>
+										<argument>--plugin</argument>
+										<argument>cucumber.runtime.formatter.HTMLFormatter:target/cucumber/HTMLReportiOS</argument>
+										<argument>--plugin</argument>
+										<argument>json:target/cucumber_ios.json</argument>
+										<argument>--monochrome</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+	</profiles>
+
+	<dependencies>
+		<dependency>
+    		<groupId>com.hotwire.testing</groupId>
+			<artifactId>nativeAppStepDefs</artifactId>
+		</dependency>
+	</dependencies>
+</project>

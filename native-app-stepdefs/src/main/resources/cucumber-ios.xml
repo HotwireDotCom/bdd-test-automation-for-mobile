@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <bean lazy-init="false"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property value="SYSTEM_PROPERTIES_MODE_OVERRIDE" name="systemPropertiesModeName"/>
+        <property name="properties">
+            <props>
+                <prop key="app_dir"/>
+                <prop key="appium_url">http://127.0.0.1:4723/wd/hub</prop>
+                <prop key="app_name">YourApp.app</prop>
+                <prop key="browser_name"/>
+                <prop key="platform_version">9.0</prop>
+                <prop key="platform_name">iOS</prop>
+                <prop key="device_name"/>
+                <prop key="bundle_id"/>
+                <prop key="udid"/>
+                <prop key="sendKeyStrategy">setValue</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="environmentSettings"
+          class="com.hotwire.test.steps.application.IOSEnvironmentSettings"
+          scope="cucumber-glue">
+        <property name="appiumDriver" ref="appiumDriver"/>
+    </bean>
+
+    <bean id="desiredCapabilities" class="org.openqa.selenium.remote.DesiredCapabilities">
+        <constructor-arg>
+            <map>
+                <entry key="browserName" value="${browser_name}"/>
+                <entry key="platformVersion" value="${platform_version}"/>
+                <entry key="platformName" value="${platform_name}"/>
+                <entry key="deviceName" value="${device_name}"/>
+                <entry key="bundleId" value="${bundle_id}"/>
+                <entry key="udid" value="${udid}"/>
+                <entry key="app" value="${app_dir}/${app_name}"/>
+                <entry key="sendKeyStrategy" value="${sendKeyStrategy}"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+	<bean id="application"
+          class="com.hotwire.test.steps.application.IosApplication"
+          parent="appiumDriverAwareModel"/>
+
+</beans>

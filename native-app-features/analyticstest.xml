@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<verticalName>
+   <screenName>
+   		<elementName>
+ 			<pagename>nameOfPage</pagename>
+ 			<vertical>hotel</vertical>
+ 			<tapState>true</tapState>
+   		</elementName>
+   </screenName>
+</verticalName>
